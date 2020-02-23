@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Currency converter</string>
+    <string name="tv_convert_from">конверировать из</string>
+    <string name="tv_convert_to">конвертировать в</string>
+</resources>
