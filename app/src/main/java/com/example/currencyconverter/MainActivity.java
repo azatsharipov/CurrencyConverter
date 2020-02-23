@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         });*/
     }
 
+    //load list of currencies
     class CurrenciesLoader extends AsyncTask<Void, Void, HashSet<String>> {
 
         @Override
@@ -119,6 +120,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public HashSet<String> connect() throws IOException {
+        HashSet<String> curs = new HashSet<String>();
+        URL url = new URL(site + apiV + "/currencies?apiKey=" + apiKey);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        try {
+            InputStream in = conn.getInputStream();
+            Scanner scanner = new Scanner(in);
+            scanner.useDelimiter("\\A");
+            String input = "";
+            if (scanner.hasNext())
+                input = scanner.next();
+            JSONObject inputJson = new JSONObject(input);
+            JSONObject res = inputJson.getJSONObject("results");
+            Iterator<String> it = res.keys();
+            for (Iterator<String> iter = it; iter.hasNext(); ) {
+                String cur = iter.next();
+                curs.add(cur);
+            }
+        } finally {
+            conn.disconnect();
+            return curs;
+        }
+    }
+
+    //convert to second currency
     class ConvertLoader extends AsyncTask<Double, Void, Double> {
 
         @Override
@@ -161,30 +187,6 @@ public class MainActivity extends AppCompatActivity {
         } finally {
             conn.disconnect();
             return ret * from;
-        }
-    }
-
-    public HashSet<String> connect() throws IOException {
-        HashSet<String> curs = new HashSet<String>();
-        URL url = new URL(site + apiV + "/currencies?apiKey=" + apiKey);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        try {
-            InputStream in = conn.getInputStream();
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-            String input = "";
-            if (scanner.hasNext())
-                input = scanner.next();
-            JSONObject inputJson = new JSONObject(input);
-            JSONObject res = inputJson.getJSONObject("results");
-            Iterator<String> it = res.keys();
-            for (Iterator<String> iter = it; iter.hasNext(); ) {
-                String cur = iter.next();
-                curs.add(cur);
-            }
-        } finally {
-            conn.disconnect();
-            return curs;
         }
     }
 }
